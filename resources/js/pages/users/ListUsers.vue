@@ -13,8 +13,7 @@ const form = reactive({
 const getUsers = () => {
     axios.get('/api/users')
         .then((response) => {
-            //console.log(response)
-            users.value = response.data;
+            users.value = response.data; //console.log(response.data)
         })
 }
 
