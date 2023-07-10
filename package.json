@@ -14,8 +14,11 @@
     "dependencies": {
         "admin-lte": "3.2",
         "jquery": "^3.7.0",
+        "vee-validate": "^4.10.6",
         "vue": "^3.2.36",
         "vue-loader": "^17.0.1",
-        "vue-router": "^4.0.13"
+        "vue-router": "^4.0.13",
+        "yip": "^3.7.0",
+        "yup": "^1.2.0"
     }
 }

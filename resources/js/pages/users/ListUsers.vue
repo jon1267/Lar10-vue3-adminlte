@@ -1,14 +1,16 @@
 <script setup>
 import axios from 'axios';
 import { ref, onMounted, reactive } from 'vue';
+import { Field, Form } from 'vee-validate';
+import * as yup from 'yup';
 
 const users = ref([]);
 
-const form = reactive({
+/*const form = reactive({
     name: '',
     email: '',
     password: '',
-});
+});*/
 
 const getUsers = () => {
     axios.get('/api/users')
@@ -17,14 +19,20 @@ const getUsers = () => {
         })
 }
 
-const createUser = () => {
-    axios.post('/api/users', form)
+const schema = yup.object({
+    name: yup.string().required(),
+    email: yup.string().email().required(),
+    password: yup.string().required().min(8),
+});
+
+const createUser = (values, {resetForm}) => {
+    //console.log(values);
+    axios.post('/api/users', values)
         .then((response) => {
-            users.value.push(response.data);//console.log(response.data);
-            form.name = '';
-            form.email = '';
-            form.password = '';
+            //console.log(response.data);
+            users.value.unshift(response.data);//users.value.push(response.data);
             $('#createUserModal').modal('hide');
+            resetForm();
         });
 }
 
@@ -99,31 +107,35 @@ onMounted(() => {
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form autocomplete="off">
+
+                <Form @submit="createUser" :validation-schema="schema" v-slot="{ errors }">
+                    <div class="modal-body">
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input v-model="form.name" type="text" class="form-control " id="name"
-                                   aria-describedby="nameHelp" placeholder="Enter full name">
+                            <Field name="name" type="text" class="form-control " :class="{'is-invalid': errors.name}" id="name"
+                                   aria-describedby="nameHelp" placeholder="Enter full name" />
+                            <span class="invalid-feedback">{{ errors.name }}</span>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input v-model="form.email" type="email" class="form-control " id="email"
-                                   aria-describedby="nameHelp" placeholder="Enter full name">
+                            <Field name="email" type="email" class="form-control " :class="{'is-invalid': errors.email}" id="email"
+                                   aria-describedby="nameHelp" placeholder="Enter full name" />
+                            <span class="invalid-feedback">{{ errors.email }}</span>
                         </div>
-                    </form>
 
-                    <div class="form-group">
-                        <label for="email">Password</label>
-                        <input v-model="form.password" type="password" class="form-control " id="password"
-                               aria-describedby="nameHelp" placeholder="Enter password">
+                        <div class="form-group">
+                            <label for="email">Password</label>
+                            <Field name="password" type="password" class="form-control " :class="{'is-invalid': errors.password}" id="password"
+                                   aria-describedby="nameHelp" placeholder="Enter password" />
+                            <span class="invalid-feedback">{{ errors.password }}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button @click="createUser" type="button" class="btn btn-primary">Save</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </Form>
             </div>
         </div>
     </div>
