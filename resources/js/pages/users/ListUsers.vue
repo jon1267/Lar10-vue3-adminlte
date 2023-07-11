@@ -87,7 +87,7 @@ onMounted(() => {
                                 <td>{{ user.email }}</td>
                                 <td>-</td>
                                 <td>-</td>
-                                <td>-</td>
+                                <td><a href="#"><i class="fa fa-edit"></i></a></td>
                             </tr>
                         </tbody>
                     </table>
