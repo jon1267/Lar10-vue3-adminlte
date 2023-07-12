@@ -5,6 +5,8 @@ import { Field, Form } from 'vee-validate';
 import * as yup from 'yup';
 
 const users = ref([]);
+const editing = ref(false);
+const formValues = ref();
 
 /*const form = reactive({
     name: '',
@@ -31,9 +33,25 @@ const createUser = (values, {resetForm}) => {
         .then((response) => {
             //console.log(response.data);
             users.value.unshift(response.data);//users.value.push(response.data);
-            $('#createUserModal').modal('hide');
+            $('#userFormModal').modal('hide');
             resetForm();
         });
+}
+
+const addUser = () => {
+    editing.value = false;
+    $('#userFormModal').modal('show');
+}
+
+const editUser = (user) => {
+    console.log(user);
+    editing.value = true;
+    $('#userFormModal').modal('show');
+    formValues.value = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+    };
 }
 
 onMounted(() => {
@@ -62,8 +80,8 @@ onMounted(() => {
 
     <div class="content">
         <div class="container-fluid">
-
-            <button type="button" class="mb-2 btn btn-primary" data-toggle="modal" data-target="#createUserModal">
+            <!-- data-toggle="modal" data-target="#userFormModal" -->
+            <button @click="addUser" type="button" class="mb-2 btn btn-primary" >
                 Add New User
             </button>
 
@@ -87,7 +105,7 @@ onMounted(() => {
                                 <td>{{ user.email }}</td>
                                 <td>-</td>
                                 <td>-</td>
-                                <td><a href="#"><i class="fa fa-edit"></i></a></td>
+                                <td><a href="#" @click.prevent="editUser(user)"><i class="fa fa-edit"></i></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -97,18 +115,21 @@ onMounted(() => {
         </div>
     </div>
 
-    <div class="modal fade" id="createUserModal" data-backdrop="static" tabindex="-1" role="dialog"
+    <div class="modal fade" id="userFormModal" data-backdrop="static" tabindex="-1" role="dialog"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Add New User</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">
+                        <span v-if="editing">Edit User</span>
+                        <span v-else>Add New User</span>
+                    </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
-                <Form @submit="createUser" :validation-schema="schema" v-slot="{ errors }">
+                <Form @submit="createUser" :validation-schema="schema" v-slot="{ errors }" :initial-values="formValues">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="name">Name</label>
