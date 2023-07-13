@@ -7,6 +7,7 @@ import * as yup from 'yup';
 const users = ref([]);
 const editing = ref(false);
 const formValues = ref();
+const form = ref(null);
 
 /*const form = reactive({
     name: '',
@@ -21,10 +22,18 @@ const getUsers = () => {
         })
 }
 
-const schema = yup.object({
+const createUserSchema = yup.object({
     name: yup.string().required(),
     email: yup.string().email().required(),
     password: yup.string().required().min(8),
+});
+
+const editUserSchema = yup.object({
+    name: yup.string().required(),
+    email: yup.string().email().required(),
+    password: yup.string().when((password, schema) => {
+        return password ? schema.required().min(8) : schema;
+    }),
 });
 
 const createUser = (values, {resetForm}) => {
@@ -44,14 +53,27 @@ const addUser = () => {
 }
 
 const editUser = (user) => {
-    console.log(user);
+    //console.log(user);
     editing.value = true;
+    form.value.resetForm()
     $('#userFormModal').modal('show');
     formValues.value = {
         id: user.id,
         name: user.name,
         email: user.email,
     };
+}
+
+const updateUser = (values) => {
+    console.log(values)
+}
+
+const handleSubmit = (values) => {
+    editing.value ? updateUser(values) : createUser(values)
+}
+
+const handleSchema = () => {
+    return editing.value ? editUserSchema : createUserSchema;
 }
 
 onMounted(() => {
@@ -129,7 +151,7 @@ onMounted(() => {
                     </button>
                 </div>
 
-                <Form @submit="createUser" :validation-schema="schema" v-slot="{ errors }" :initial-values="formValues">
+                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editUserSchema : createUserSchema" v-slot="{ errors }" :initial-values="formValues">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="name">Name</label>
