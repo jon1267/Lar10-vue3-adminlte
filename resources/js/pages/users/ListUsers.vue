@@ -9,12 +9,6 @@ const editing = ref(false);
 const formValues = ref();
 const form = ref(null);
 
-/*const form = reactive({
-    name: '',
-    email: '',
-    password: '',
-});*/
-
 const getUsers = () => {
     axios.get('/api/users')
         .then((response) => {
@@ -72,9 +66,9 @@ const handleSubmit = (values) => {
     editing.value ? updateUser(values) : createUser(values)
 }
 
-const handleSchema = () => {
-    return editing.value ? editUserSchema : createUserSchema;
-}
+//const handleSchema = () => {
+//    return editing.value ? editUserSchema : createUserSchema;
+//}
 
 onMounted(() => {
     getUsers()
