@@ -25,9 +25,9 @@ const createUserSchema = yup.object({
 const editUserSchema = yup.object({
     name: yup.string().required(),
     email: yup.string().email().required(),
-    password: yup.string().when((password, schema) => {
-        return password ? schema.required().min(8) : schema;
-    }),
+    //password: yup.string().when((password, schema) => {
+    //    return password ? schema.required().min(8) : schema;
+    //}),
 });
 
 const createUser = (values, {resetForm}) => {
@@ -60,10 +60,23 @@ const editUser = (user) => {
 
 const updateUser = (values) => {
     console.log(values)
+    axios.put('/api/users/'+formValues.value.id, values)
+        .then((response) => {
+            const index = users.value.findIndex(user => user.id === response.data.id)
+            users.value[index] = response.data;
+            $('#userFormModal').modal('hide');
+            console.log(users.value[index])
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+        .finally(() => {
+            form.value.resetForm();
+        });
 }
 
 const handleSubmit = (values) => {
-    editing.value ? updateUser(values) : createUser(values)
+    editing.value ? updateUser(values) : createUser(values);
 }
 
 //const handleSchema = () => {
