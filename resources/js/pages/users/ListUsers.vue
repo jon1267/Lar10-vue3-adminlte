@@ -30,7 +30,7 @@ const editUserSchema = yup.object({
     //}),
 });
 
-const createUser = (values, {resetForm}) => {
+const createUser = (values, {resetForm, setErrors }) => {
     //console.log(values);
     axios.post('/api/users', values)
         .then((response) => {
@@ -38,7 +38,13 @@ const createUser = (values, {resetForm}) => {
             users.value.unshift(response.data);//users.value.push(response.data);
             $('#userFormModal').modal('hide');
             resetForm();
-        });
+        })
+        .catch((error) => {
+            //console.log(error);//this {clg} help find array with errors :(
+            if (error.response.data.errors) {
+                setErrors(error.response.data.errors)
+            }
+        })
 }
 
 const addUser = () => {
@@ -58,25 +64,29 @@ const editUser = (user) => {
     };
 }
 
-const updateUser = (values) => {
-    console.log(values)
+const updateUser = (values, {setErrors}) => {
+    //console.log(values)
     axios.put('/api/users/'+formValues.value.id, values)
         .then((response) => {
             const index = users.value.findIndex(user => user.id === response.data.id)
             users.value[index] = response.data;
             $('#userFormModal').modal('hide');
-            console.log(users.value[index])
+            //console.log(users.value[index])
         })
         .catch((error) => {
-            console.log(error)
+            //console.log(error)
+            setErrors(error.response.data.errors);
         })
-        .finally(() => {
-            form.value.resetForm();
-        });
+        //.finally(() => {
+        //    form.value.resetForm();
+        //});
 }
 
-const handleSubmit = (values) => {
-    editing.value ? updateUser(values) : createUser(values);
+const handleSubmit = (values, actions) => {
+    console.log(actions);
+    editing.value ?
+        updateUser(values, actions) :
+        createUser(values, actions);
 }
 
 //const handleSchema = () => {
