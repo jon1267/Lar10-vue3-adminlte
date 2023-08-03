@@ -3,7 +3,9 @@ import axios from 'axios';
 import { ref, onMounted, reactive } from 'vue';
 import { Field, Form } from 'vee-validate';
 import * as yup from 'yup';
+import { useToastr } from '../../toastr.js';
 
+const toastr = useToastr();
 const users = ref([]);
 const editing = ref(false);
 const formValues = ref();
@@ -38,6 +40,7 @@ const createUser = (values, {resetForm, setErrors }) => {
             users.value.unshift(response.data);//users.value.push(response.data);
             $('#userFormModal').modal('hide');
             resetForm();
+            toastr.success('User created successfully.');
         })
         .catch((error) => {
             //console.log(error);//this {clg} help find array with errors :(
@@ -71,10 +74,10 @@ const updateUser = (values, {setErrors}) => {
             const index = users.value.findIndex(user => user.id === response.data.id)
             users.value[index] = response.data;
             $('#userFormModal').modal('hide');
-            //console.log(users.value[index])
+            toastr.success('User updated successfully.');
         })
         .catch((error) => {
-            //console.log(error)
+            console.log(error)
             setErrors(error.response.data.errors);
         })
         //.finally(() => {
@@ -94,7 +97,7 @@ const handleSubmit = (values, actions) => {
 //}
 
 onMounted(() => {
-    getUsers()
+    getUsers();
 });
 
 </script>
