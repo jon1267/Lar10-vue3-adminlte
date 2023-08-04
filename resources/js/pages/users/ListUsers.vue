@@ -10,6 +10,7 @@ const users = ref([]);
 const editing = ref(false);
 const formValues = ref();
 const form = ref(null);
+const deletedUserId = ref(null);
 
 const getUsers = () => {
     axios.get('/api/users')
@@ -96,6 +97,20 @@ const handleSubmit = (values, actions) => {
 //    return editing.value ? editUserSchema : createUserSchema;
 //}
 
+const confirmUserDeletion = (user) => {
+    deletedUserId.value = user.id;
+    $('#deleteUserModal').modal('show');
+};
+
+const deleteUser = () => {
+    axios.delete(`/api/users/${deletedUserId.value}`)
+        .then(() => {
+            $('#deleteUserModal').modal('hide');// hide confirm modal
+            users.value = users.value.filter( user => user.id !== deletedUserId.value);//filter remain users
+            toastr.success('User deleted successfully.');// toastr about success
+        });
+};
+
 onMounted(() => {
     getUsers();
 });
@@ -129,7 +144,7 @@ onMounted(() => {
 
             <div class="card">
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">#</th>
@@ -147,7 +162,10 @@ onMounted(() => {
                                 <td>{{ user.email }}</td>
                                 <td>-</td>
                                 <td>-</td>
-                                <td><a href="#" @click.prevent="editUser(user)"><i class="fa fa-edit"></i></a></td>
+                                <td>
+                                    <a href="#" @click.prevent="editUser(user)"><i class="fa fa-edit"></i></a>
+                                    <a href="#" @click.prevent="confirmUserDeletion(user)" ><i class="fa fa-trash text-danger ml-2"></i></a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -199,6 +217,33 @@ onMounted(() => {
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </Form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="deleteUserModal" data-backdrop="static" tabindex="-1" role="dialog"
+         aria-labelledby="staticBackdropLabelDelete" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabelDelete">
+                        <span >Delete User</span>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <h5>Are your sure you want delete this user ?</h5>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button @click.prevent="deleteUser" type="button" class="btn btn-primary">Delete User</button>
+                </div>
+
             </div>
         </div>
     </div>
