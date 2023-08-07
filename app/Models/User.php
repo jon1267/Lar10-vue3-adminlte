@@ -42,4 +42,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // this with getFormattedCreatedAtAttribute() method, add 'formatted_created_at'
+    // to Response object, which visible in vue modules as {{ user.formatted_created_at}}
+    protected $appends = ['formatted_created_at',];
+
+    public function getFormattedCreatedAtAttribute()
+    {
+        return $this->created_at->format(config('app.date_format'));
+    }
 }
