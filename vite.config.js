@@ -10,4 +10,7 @@ export default defineConfig({
         }),
         vue()
     ],
+    build: {
+        chunkSizeWarningLimit: 1600,
+    },
 });
