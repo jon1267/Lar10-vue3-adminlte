@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        return  User::latest()->get();
+        return  User::latest()->paginate();
         /*->map(function ($user) {
             return [
                 'id' => $user->id,
@@ -76,7 +76,7 @@ class UserController extends Controller
         $users = User::where('name', 'like', "%{$searchQuery}%")
             ->orWhere('email', 'like', "%{$searchQuery}%")
             ->latest()
-            ->get();
+            ->paginate();
 
         return response()->json($users);
     }

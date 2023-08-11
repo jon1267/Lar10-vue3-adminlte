@@ -14,6 +14,7 @@
     "dependencies": {
         "admin-lte": "3.2",
         "jquery": "^3.7.0",
+        "laravel-vue-pagination": "^4.1.1",
         "lodash": "^4.17.21",
         "moment": "^2.29.4",
         "vee-validate": "^4.10.6",
