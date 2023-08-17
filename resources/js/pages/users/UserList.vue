@@ -144,9 +144,17 @@ onMounted(() => {
     <div class="content">
         <div class="container-fluid">
             <div class="d-flex justify-content-between">
-                <button @click="addUser" type="button" class="mb-2 btn btn-primary" >
-                    Add New User
-                </button>
+
+                <div>
+                    <button @click="addUser" type="button" class="mb-2 btn btn-primary" >
+                        Add New User
+                    </button>
+                    <button @click="bulkDelete" type="button" class="ml-2 mb-2 btn btn-danger" >
+                        Delete selected
+                    </button>
+                </div>
+
+
                 <div>
                     <input class="form-control" type="text" v-model="searchQuery" placeholder="Search..." />
                     <!--<button @click.prevent="search">Submit</button> - first debug this, then remove to watch -->
@@ -157,6 +165,7 @@ onMounted(() => {
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" ></th>
                                 <th style="width: 10px">#</th>
                                 <th>Name</th>
                                 <th>Email</th>

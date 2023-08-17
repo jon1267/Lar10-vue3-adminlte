@@ -56,6 +56,7 @@ const changeRole = (user, role) => {
 <template>
 
     <tr>
+        <td><input type="checkbox"></td>
         <td>{{ index+1 }}</td>
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>
