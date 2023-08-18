@@ -113,6 +113,32 @@ const search = () => {
         .catch(error => { console.log(error) })
 };
 
+// selectedUsers for delete
+const selectedUsers = ref([]);
+
+const toggleSelection = (user) => {
+    const index = selectedUsers.value.indexOf(user.id)
+    if (index === -1) {
+        selectedUsers.value.push(user.id);
+    } else {
+        selectedUsers.value.splice(index, 1);
+    }
+    //console.log(selectedUsers.value);
+};
+
+const bulkDelete = () => {
+    axios.delete('/api/users', {
+        data: {
+            ids: selectedUsers.value
+        }
+    })
+    .then( response => {
+        users.value.data = users.value.data.filter(user => !selectedUsers.value.includes(user.id))
+        selectedUsers.value = [];
+        toastr.success(response.data.message);
+    })
+};
+
 watch(searchQuery,  debounce(() => {
     search()
 }, 500));
@@ -149,7 +175,7 @@ onMounted(() => {
                     <button @click="addUser" type="button" class="mb-2 btn btn-primary" >
                         Add New User
                     </button>
-                    <button @click="bulkDelete" type="button" class="ml-2 mb-2 btn btn-danger" >
+                    <button v-if="selectedUsers.length > 0" @click="bulkDelete" type="button" class="ml-2 mb-2 btn btn-danger" >
                         Delete selected
                     </button>
                 </div>
@@ -182,6 +208,7 @@ onMounted(() => {
                                  :index = index
                                  @edit-user = "editUser"
                                  @user-deleted = "userDeleted"
+                                 @toggle-selection = "toggleSelection"
                            />
 
                         </tbody>
