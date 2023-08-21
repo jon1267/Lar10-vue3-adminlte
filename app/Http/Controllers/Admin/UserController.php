@@ -86,8 +86,10 @@ class UserController extends Controller
         $users = User::whereIn('id', request('ids')) ;
         if ($users) {
             $users->delete();
+
+            return response()->json(['message' => 'Users deleted successfully.']);
         }
 
-        return response()->json(['message' => 'Users deleted successfully.']);
+        return response()->json(['message' => 'Something went wrong. Users not deleted.']);
     }
 }

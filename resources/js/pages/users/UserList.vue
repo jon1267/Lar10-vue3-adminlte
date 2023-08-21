@@ -39,7 +39,7 @@ const createUser = (values, {resetForm, setErrors }) => {
     //console.log(values);
     axios.post('/api/users', values)
         .then((response) => {
-            //console.log(response.data);
+            console.log(response.data);
             users.value.unshift(response.data);//users.value.push(response.data);
             $('#userFormModal').modal('hide');
             resetForm();
@@ -89,7 +89,7 @@ const updateUser = (values, {setErrors}) => {
 }
 
 const handleSubmit = (values, actions) => {
-    console.log(actions);
+    //console.log(actions);
     editing.value ?
         updateUser(values, actions) :
         createUser(values, actions);
@@ -135,8 +135,21 @@ const bulkDelete = () => {
     .then( response => {
         users.value.data = users.value.data.filter(user => !selectedUsers.value.includes(user.id))
         selectedUsers.value = [];
+        selectAll.value = false;
         toastr.success(response.data.message);
     })
+};
+
+const selectAll = ref(false);
+
+const selectAllUsers = () => {
+    if (selectAll.value) {
+        selectedUsers.value = users.value.data.map(user => user.id);
+    } else {
+        selectedUsers.value = [];
+    }
+
+    console.log(selectedUsers.value);
 };
 
 watch(searchQuery,  debounce(() => {
@@ -191,7 +204,7 @@ onMounted(() => {
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" ></th>
+                                <th><input type="checkbox" v-model="selectAll" @change="selectAllUsers" ></th>
                                 <th style="width: 10px">#</th>
                                 <th>Name</th>
                                 <th>Email</th>
@@ -209,6 +222,7 @@ onMounted(() => {
                                  @edit-user = "editUser"
                                  @user-deleted = "userDeleted"
                                  @toggle-selection = "toggleSelection"
+                                 :select-all = "selectAll"
                            />
 
                         </tbody>
