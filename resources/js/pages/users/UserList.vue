@@ -1,12 +1,12 @@
 <script setup>
 import axios from 'axios';
-import { ref, onMounted, reactive, watch } from 'vue';
-import { Field, Form } from 'vee-validate';
+import {ref, onMounted, reactive, watch} from 'vue';
+import {Field, Form} from 'vee-validate';
 import * as yup from 'yup';
-import { useToastr } from '../../toastr.js';
+import {useToastr} from '../../toastr.js';
 import UserListItem from './UserListItem.vue';
-import { debounce } from 'lodash';
-import { Bootstrap4Pagination } from 'laravel-vue-pagination';
+import {debounce} from 'lodash';
+import {Bootstrap4Pagination} from 'laravel-vue-pagination';
 
 const toastr = useToastr();
 const users = ref({'data': []});
@@ -18,6 +18,8 @@ const getUsers = (page = 1) => {
     axios.get(`/api/users?page=${page}`)
         .then((response) => {
             users.value = response.data; //console.log(response.data)
+            selectedUsers.value = [];
+            selectAll.value = false;
         })
 }
 
@@ -35,12 +37,12 @@ const editUserSchema = yup.object({
     //}),
 });
 
-const createUser = (values, {resetForm, setErrors }) => {
+const createUser = (values, {resetForm, setErrors}) => {
     //console.log(values);
     axios.post('/api/users', values)
         .then((response) => {
             console.log(response.data);
-            users.value.unshift(response.data);//users.value.push(response.data);
+            users.value.data.unshift(response.data);//users.value.push(response.data);
             $('#userFormModal').modal('hide');
             resetForm();
             toastr.success('User created successfully.');
@@ -72,10 +74,10 @@ const editUser = (user) => {
 
 const updateUser = (values, {setErrors}) => {
     //console.log(values)
-    axios.put('/api/users/'+formValues.value.id, values)
+    axios.put('/api/users/' + formValues.value.id, values)
         .then((response) => {
-            const index = users.value.findIndex(user => user.id === response.data.id)
-            users.value[index] = response.data;
+            const index = users.value.data.findIndex(user => user.id === response.data.id)
+            users.value.data[index] = response.data;
             $('#userFormModal').modal('hide');
             toastr.success('User updated successfully.');
         })
@@ -83,9 +85,9 @@ const updateUser = (values, {setErrors}) => {
             console.log(error)
             setErrors(error.response.data.errors);
         })
-        //.finally(() => {
-        //    form.value.resetForm();
-        //});
+    //.finally(() => {
+    //    form.value.resetForm();
+    //});
 }
 
 const handleSubmit = (values, actions) => {
@@ -96,7 +98,7 @@ const handleSubmit = (values, actions) => {
 }
 
 const userDeleted = (userId) => {
-    users.value = users.value.filter( user => user.id !== userId);//filter remain users
+    users.value = users.value.filter(user => user.id !== userId);//filter remain users
 };
 
 const searchQuery = ref(null);
@@ -110,7 +112,9 @@ const search = () => {
         .then(response => {
             users.value = response.data;
         })
-        .catch(error => { console.log(error) })
+        .catch(error => {
+            console.log(error)
+        })
 };
 
 // selectedUsers for delete
@@ -132,12 +136,12 @@ const bulkDelete = () => {
             ids: selectedUsers.value
         }
     })
-    .then( response => {
-        users.value.data = users.value.data.filter(user => !selectedUsers.value.includes(user.id))
-        selectedUsers.value = [];
-        selectAll.value = false;
-        toastr.success(response.data.message);
-    })
+        .then(response => {
+            users.value.data = users.value.data.filter(user => !selectedUsers.value.includes(user.id))
+            selectedUsers.value = [];
+            selectAll.value = false;
+            toastr.success(response.data.message);
+        })
 };
 
 const selectAll = ref(false);
@@ -152,7 +156,7 @@ const selectAllUsers = () => {
     console.log(selectedUsers.value);
 };
 
-watch(searchQuery,  debounce(() => {
+watch(searchQuery, debounce(() => {
     search()
 }, 500));
 
@@ -184,18 +188,23 @@ onMounted(() => {
         <div class="container-fluid">
             <div class="d-flex justify-content-between">
 
-                <div>
-                    <button @click="addUser" type="button" class="mb-2 btn btn-primary" >
+                <div class="d-flex">
+                    <button @click="addUser" type="button" class="mb-2 btn btn-primary">
+                        <i class="fa fa-plus-circle mr-1"></i>
                         Add New User
                     </button>
-                    <button v-if="selectedUsers.length > 0" @click="bulkDelete" type="button" class="ml-2 mb-2 btn btn-danger" >
-                        Delete selected
-                    </button>
+                    <div v-if="selectedUsers.length > 0">
+                        <button @click="bulkDelete" type="button" class="ml-2 mb-2 btn btn-danger">
+                            <i class="fa fa-trash mr-1"></i>
+                            Delete selected
+                        </button>
+                        <span class="ml-2">Selected {{ selectedUsers.length }} users</span>
+                    </div>
                 </div>
 
 
                 <div>
-                    <input class="form-control" type="text" v-model="searchQuery" placeholder="Search..." />
+                    <input class="form-control" type="text" v-model="searchQuery" placeholder="Search..."/>
                     <!--<button @click.prevent="search">Submit</button> - first debug this, then remove to watch -->
                 </div>
             </div>
@@ -203,39 +212,39 @@ onMounted(() => {
                 <div class="card-body">
                     <table class="table table-bordered table-hover">
                         <thead>
-                            <tr>
-                                <th><input type="checkbox" v-model="selectAll" @change="selectAllUsers" ></th>
-                                <th style="width: 10px">#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Registered Date</th>
-                                <th>Role</th>
-                                <th>Actions</th>
-                            </tr>
+                        <tr>
+                            <th><input type="checkbox" v-model="selectAll" @change="selectAllUsers"></th>
+                            <th style="width: 10px">#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Registered Date</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
                         </thead>
                         <tbody v-if="users.data.length > 0">
 
-                           <UserListItem v-for="(user, index) in users.data"
-                                 :key = "user.id"
-                                 :user = user
-                                 :index = index
-                                 @edit-user = "editUser"
-                                 @user-deleted = "userDeleted"
-                                 @toggle-selection = "toggleSelection"
-                                 :select-all = "selectAll"
-                           />
+                        <UserListItem v-for="(user, index) in users.data"
+                                      :key="user.id"
+                                      :user=user
+                                      :index=index
+                                      @edit-user="editUser"
+                                      @user-deleted="userDeleted"
+                                      @toggle-selection="toggleSelection"
+                                      :select-all="selectAll"
+                        />
 
                         </tbody>
                         <tbody v-else>
-                            <tr>
-                                <td colspan="6" class="text-center">No results found...</td>
-                            </tr>
+                        <tr>
+                            <td colspan="6" class="text-center">No results found...</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <Bootstrap4Pagination :data="users" @pagination-change-page="getUsers" />
+            <Bootstrap4Pagination :data="users" @pagination-change-page="getUsers"/>
 
         </div>
     </div>
@@ -254,26 +263,30 @@ onMounted(() => {
                     </button>
                 </div>
 
-                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editUserSchema : createUserSchema" v-slot="{ errors }" :initial-values="formValues">
+                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editUserSchema : createUserSchema"
+                      v-slot="{ errors }" :initial-values="formValues">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <Field name="name" type="text" class="form-control " :class="{'is-invalid': errors.name}" id="name"
-                                   aria-describedby="nameHelp" placeholder="Enter full name" />
+                            <Field name="name" type="text" class="form-control " :class="{'is-invalid': errors.name}"
+                                   id="name"
+                                   aria-describedby="nameHelp" placeholder="Enter full name"/>
                             <span class="invalid-feedback">{{ errors.name }}</span>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <Field name="email" type="email" class="form-control " :class="{'is-invalid': errors.email}" id="email"
-                                   aria-describedby="nameHelp" placeholder="Enter full name" />
+                            <Field name="email" type="email" class="form-control " :class="{'is-invalid': errors.email}"
+                                   id="email"
+                                   aria-describedby="nameHelp" placeholder="Enter full name"/>
                             <span class="invalid-feedback">{{ errors.email }}</span>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Password</label>
-                            <Field name="password" type="password" class="form-control " :class="{'is-invalid': errors.password}" id="password"
-                                   aria-describedby="nameHelp" placeholder="Enter password" />
+                            <Field name="password" type="password" class="form-control "
+                                   :class="{'is-invalid': errors.password}" id="password"
+                                   aria-describedby="nameHelp" placeholder="Enter password"/>
                             <span class="invalid-feedback">{{ errors.password }}</span>
                         </div>
                     </div>
