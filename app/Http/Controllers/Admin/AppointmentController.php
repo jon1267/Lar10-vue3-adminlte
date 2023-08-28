@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Enums\AppointmentStatus;
 
 class AppointmentController extends Controller
 {
@@ -18,7 +19,10 @@ class AppointmentController extends Controller
                 'id' => $appointment->id,
                 'start_time' => $appointment->start_time->format('Y-m-d  h:i A'),
                 'end_time' => $appointment->end_time->format('Y-m-d  h:i A'),
-                'status' => $appointment->status,
+                'status' => [
+                    'name' => AppointmentStatus::getStatusBy($appointment->status),
+                    'color' => AppointmentStatus::getColorBy($appointment->status)
+                ],
                 'client' => $appointment->client,
             ]);
     }

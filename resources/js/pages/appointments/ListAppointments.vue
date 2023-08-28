@@ -80,7 +80,7 @@ onMounted(() => {
                                     <td>{{ appointment.start_time}}</td>
                                     <td>{{ appointment.end_time}}</td>
                                     <td>
-                                        <span class="badge badge-success">closed</span>
+                                        <span class="badge" :class="`badge-${appointment.status.color}`">{{ appointment.status.name }}</span>
                                     </td>
                                     <td>
                                         <a href="">
