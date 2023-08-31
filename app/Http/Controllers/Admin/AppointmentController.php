@@ -11,8 +11,12 @@ class AppointmentController extends Controller
 {
     public function index()
     {
+        //dd(request('status'));
         return Appointment::query()
             ->with('client:id,first_name,last_name')
+            ->when(request('status'), function ($query) {
+                return $query->where('status', request('status'));
+            })
             ->latest()
             ->paginate()
             ->through(fn($appointment) => [
