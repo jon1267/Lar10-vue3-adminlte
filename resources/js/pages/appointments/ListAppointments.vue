@@ -2,7 +2,15 @@
 //import axios from 'axios';
 import { onMounted, ref } from 'vue';
 
-const appointmentStatus = {'scheduled': 1, 'confirmed': 2, 'cancelled': 3};
+//const appointmentStatus = {'scheduled': 1, 'confirmed': 2, 'cancelled': 3};
+const appointmentStatus = ref([]);
+
+const getAppointmentStatus = () => {
+    axios.get('/api/appointment-status')
+        .then((response) => {
+            appointmentStatus.value = response.data;
+        })
+};
 const appointments = ref([]);
 const getAppointments = (status) => {
     const params = {};
@@ -61,7 +69,7 @@ onMounted(() => {
                                 <span class="badge badge-pill badge-primary">0</span>
                             </button>
 
-                            <button @click="getAppointments(appointmentStatus.confirmed)" type="button" class="btn btn-default">
+                            <!--<button @click="getAppointments(appointmentStatus.confirmed)" type="button" class="btn btn-default">
                                 <span class="mr-1">Confirmed</span>
                                 <span class="badge badge-pill badge-success">0</span>
                             </button>
@@ -69,7 +77,7 @@ onMounted(() => {
                             <button @click="getAppointments(appointmentStatus.cancelled)" type="button" class="btn btn-default">
                                 <span class="mr-1">Cancelled</span>
                                 <span class="badge badge-pill badge-danger">0</span>
-                            </button>
+                            </button>-->
                         </div>
                     </div>
                     <div class="card">
