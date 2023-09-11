@@ -12,25 +12,7 @@ const props = defineProps({
     selectAll: Boolean,
 });
 
-const emit = defineEmits(['userDeleted', 'editUser']);
-
-const deletedUserId = ref(null);
-
-
-const confirmUserDeletion = (user) => {
-    deletedUserId.value = user.id;
-    $('#deleteUserModal').modal('show');
-};
-
-const deleteUser = () => {
-    axios.delete(`/api/users/${deletedUserId.value}`)
-        .then(() => {
-            $('#deleteUserModal').modal('hide');// hide confirm modal
-            toastr.success('User deleted successfully.');// toastr about success
-            //users.value = users.value.filter( user => user.id !== deletedUserId.value);//filter remain users
-            emit('userDeleted', deletedUserId.value)
-        });
-};
+const emit = defineEmits(['userDeleted', 'editUser', 'confirmUserDeletion']);
 
 const roles = ref([
     {
@@ -75,36 +57,9 @@ const toggleSelection = () => {
         </td>
         <td>
             <a href="#" @click.prevent="$emit('editUser', user)"><i class="fa fa-edit"></i></a>
-            <a href="#" @click.prevent="confirmUserDeletion(user)" ><i class="fa fa-trash text-danger ml-2"></i></a>
+            <a href="#" @click.prevent="$emit('confirmUserDeletion', user.id)" ><i class="fa fa-trash text-danger ml-2"></i></a>
         </td>
     </tr>
-
-
-    <div class="modal fade" id="deleteUserModal" data-backdrop="static" tabindex="-1" role="dialog"
-         aria-labelledby="staticBackdropLabelDelete" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabelDelete">
-                        <span >Delete User</span>
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <h5>Are your sure you want delete this user ?</h5>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button @click.prevent="deleteUser" type="button" class="btn btn-primary">Delete User</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
 
 </template>
 

@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        return  User::latest()->paginate(2);
+        return  User::latest()->paginate(10);
         /*->map(function ($user) {
             return [
                 'id' => $user->id,

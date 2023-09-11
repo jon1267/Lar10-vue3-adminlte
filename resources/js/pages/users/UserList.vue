@@ -97,9 +97,9 @@ const handleSubmit = (values, actions) => {
         createUser(values, actions);
 }
 
-const userDeleted = (userId) => {
-    users.value = users.value.filter(user => user.id !== userId);//filter remain users
-};
+/*const userDeleted = (userId) => {
+    users.value = users.value.filter(user => user.id !== userId); //filter remain users
+};*/
 
 const searchQuery = ref(null);
 
@@ -128,6 +128,22 @@ const toggleSelection = (user) => {
         selectedUsers.value.splice(index, 1);
     }
     //console.log(selectedUsers.value);
+};
+
+const deletedUserId = ref(null);
+const confirmUserDeletion = (id) => {
+    deletedUserId.value = id;
+    $('#deleteUserModal').modal('show');
+};
+
+const deleteUser = () => {
+    axios.delete(`/api/users/${deletedUserId.value}`)
+        .then(() => {
+            $('#deleteUserModal').modal('hide');// hide confirm modal
+            toastr.success('User deleted successfully.');// toastr about success
+            users.value.data = users.value.data.filter(user => user.id !== deletedUserId.value);//filter remain users
+            //emit('userDeleted', deletedUserId.value)
+        });
 };
 
 const bulkDelete = () => {
@@ -229,7 +245,7 @@ onMounted(() => {
                                       :user=user
                                       :index=index
                                       @edit-user="editUser"
-                                      @user-deleted="userDeleted"
+                                      @confirm-user-deletion="confirmUserDeletion"
                                       @toggle-selection="toggleSelection"
                                       :select-all="selectAll"
                         />
@@ -295,6 +311,32 @@ onMounted(() => {
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </Form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteUserModal" data-backdrop="static" tabindex="-1" role="dialog"
+         aria-labelledby="staticBackdropLabelDelete" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabelDelete">
+                        <span >Delete User</span>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <h5>Are your sure you want delete this user ?</h5>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button @click.prevent="deleteUser" type="button" class="btn btn-primary">Delete User</button>
+                </div>
+
             </div>
         </div>
     </div>
