@@ -33,6 +33,11 @@ class AppointmentController extends Controller
 
     public function store()
     {
+        request()->validate([
+            'title' => 'required',
+            'description' => 'required',
+        ]);
+
         Appointment::create([
             'title' => request('title'),
             'client_id' => 2,
