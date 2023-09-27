@@ -13,6 +13,7 @@
     },
     "dependencies": {
         "admin-lte": "3.2",
+        "flatpickr": "^4.6.13",
         "jquery": "^3.7.0",
         "laravel-vue-pagination": "^4.1.1",
         "lodash": "^4.17.21",

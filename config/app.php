@@ -71,6 +71,7 @@ return [
     */
 
     'timezone' => 'UTC',
+    //'timezone' => 'Europe/Kiev',
     'date_format' => 'Y-m-d',
 
     /*

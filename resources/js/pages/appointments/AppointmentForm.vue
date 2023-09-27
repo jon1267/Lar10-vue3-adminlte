@@ -1,24 +1,26 @@
 <script setup>
 import axios from 'axios';
-import { reactive }  from "vue";
+import { reactive, onMounted, ref } from "vue";
 import { useRouter } from 'vue-router';
 import { useToastr } from "@/toastr";
 import { Form } from 'vee-validate';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/themes/light.css';
 
 const router = useRouter();
 const toastr = useToastr();
 const form = reactive({
     title: '',
     client_id: '',
-    start_date: '',
     start_time: '',
+    end_time: '',
     description: '',
 });
 
 const handleSubmit = (values, actions) => {
     axios.post('/api/appointments/create', form)
         .then((response) => {
-            console.log(response);
+            //console.log(response);
             router.push('/admin/appointments');
             toastr.success('Appointment created successfully.');
         } )
@@ -26,6 +28,25 @@ const handleSubmit = (values, actions) => {
             actions.setErrors(error.response.data.errors);
         })
 };
+
+const clients = ref();
+const getClients = () => {
+    axios.get('/api/clients')
+        .then((response) => {
+            console.log(response);
+            clients.value = response.data;
+        })
+};
+
+onMounted(() => {
+    flatpickr(".flatpickr", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        time_24hr: true
+    });
+
+    getClients();
+});
 </script>
 
 <template>
@@ -68,24 +89,26 @@ const handleSubmit = (values, actions) => {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="client">Client Name</label>
-                                            <select id="client" class="form-control">
-                                                <option>Client One</option>
-                                                <option>Client Two</option>
+                                            <select v-model="form.client_id" id="client" class="form-control" :class="{'is-invalid': errors.client_id}">
+                                                <option v-for="client in clients" :value="client.id" :key="client.id" >{{ client.first_name }} {{ client.last_name }}</option>
                                             </select>
+                                            <span class="invalid-feedback">{{ errors.client_id }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="date">Appointment Date</label>
-                                            <input type="date" class="form-control" id="date">
+                                            <label for="start-time">Start Time</label>
+                                            <input v-model="form.start_time" type="text" class="form-control flatpickr" :class="{'is-invalid': errors.start_time}" id="start-time">
+                                            <span class="invalid-feedback">{{ errors.start_time }}</span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="time">Appointment Time</label>
-                                            <input type="time" class="form-control" id="time">
+                                            <label for="end-time">End Time</label>
+                                            <input v-model="form.end_time" type="text" class="form-control flatpickr" :class="{'is-invalid': errors.end_time}" id="end-time">
+                                            <span class="invalid-feedback">{{ errors.end_time }}</span>
                                         </div>
                                     </div>
                                 </div>
