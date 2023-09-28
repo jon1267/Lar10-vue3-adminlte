@@ -113,9 +113,9 @@ onMounted(() => {
                                         <span class="badge" :class="`badge-${appointment.status.color}`">{{ appointment.status.name }}</span>
                                     </td>
                                     <td>
-                                        <a href="">
+                                        <router-link :to="`/admin/appointments/${appointment.id}/edit`">
                                             <i class="fa fa-edit mr-2"></i>
-                                        </a>
+                                        </router-link>
 
                                         <a href="">
                                             <i class="fa fa-trash text-danger"></i>
