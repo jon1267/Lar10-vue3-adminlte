@@ -32,4 +32,9 @@ Route::get('/api/appointments', [AppointmentController::class, 'index']);
 Route::post('/api/appointments/create', [AppointmentController::class, 'store']);
 Route::get('/api/appointments/{appointment}/edit', [AppointmentController::class, 'edit']);
 Route::put('/api/appointments/{appointment}/update', [AppointmentController::class, 'update']);
+
+//sheet!!! was error: Method delete not allowed, GET|HEAD method allowed. (? match exists get route ???)
+//route was: '/api/appointments/{appointment}' only when change route string to this, IT FIXED ...
+Route::delete('/api/delete-appointment/{appointment}', [AppointmentController::class, 'destroy']);
+
 Route::get('{view}', ApplicationController::class)->where('view', '(.*)');
