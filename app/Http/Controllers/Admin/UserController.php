@@ -10,7 +10,18 @@ class UserController extends Controller
 {
     public function index()
     {
-        return  User::latest()->paginate(10);
+        //dd(request('query'));
+        //$searchQuery = request('query');
+
+        $users = User::query()
+            ->when(request('query'), function ($query, $searchQuery) {
+                $query->orWhere('name', 'like', "%{$searchQuery}%")
+                    ->orWhere('email', 'like', "%{$searchQuery}%");
+            })
+            ->latest()
+            ->paginate(1);
+
+        return $users; //return response()->json($users);
         /*->map(function ($user) {
             return [
                 'id' => $user->id,
@@ -70,16 +81,16 @@ class UserController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function search()
+    /*public function search()
     {
         $searchQuery = request('query');
         $users = User::where('name', 'like', "%{$searchQuery}%")
             ->orWhere('email', 'like', "%{$searchQuery}%")
             ->latest()
-            ->paginate();
+            ->paginate(1);
 
         return response()->json($users);
-    }
+    }*/
 
     public function bulkDelete()
     {
