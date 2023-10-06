@@ -1,18 +1,31 @@
 <script setup>
-    import { reactive } from 'vue';
+    import {reactive, ref} from 'vue';
     import axios from "axios";
+    import { useToastr } from "@/toastr";
 
     const form = reactive({
         email: '',
         password: '',
     });
+    const toastr = useToastr();
+    const loading = ref(false);
 
+    const errorMessage = ref('');
     const handleSubmit = () => {
+        loading.value = true;
+        errorMessage.value = '';
         axios.post('/login', form)
             .then(() => {
                 window.location.href = '/admin/dashboard';
             })
-            .catch((error) => {console.log(error)});
+            .catch((error) => {
+                //console.log(error)
+                errorMessage.value = error.response.data.message;
+                toastr.error( errorMessage.value, 'ERROR!')
+            })
+            .finally(() => {
+                loading.value = false;
+            });
     };
 
 </script>
@@ -47,7 +60,7 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="icheck-primary">
-                                <input type="checkbox" id="remember">
+                                <input type="checkbox" id="remember" class="mr-2">
                                 <label for="remember">
                                     Remember Me
                                 </label>
@@ -55,7 +68,12 @@
                         </div>
 
                         <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                            <button type="submit" class="btn btn-primary btn-block" :disabled="loading">
+                                <div v-if="loading" class="spinner-border spinner-border-sm mr-2" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <span v-else>Sign In</span>
+                            </button>
                         </div>
 
                     </div>
