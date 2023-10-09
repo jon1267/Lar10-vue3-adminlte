@@ -28,9 +28,10 @@
                                 <h3>1</h3>
                                 <select
                                     style="height: 2rem; outline: 2px solid transparent;" class="px-1 rounded border-0">
-                                    <option value="">All</option>
+                                    <option value="all">All</option>
                                     <option value="scheduled">Scheduled</option>
-                                    <option value="closed">Closed</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="cancelled">Cancelled</option>
                                 </select>
                             </div>
                             <p>Appointments</p>
