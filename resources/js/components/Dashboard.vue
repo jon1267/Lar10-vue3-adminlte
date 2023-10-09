@@ -1,3 +1,7 @@
+<script setup>
+const getAppointmentsCount = () => {};
+</script>
+
 <template>
     <div class="content-header">
         <div class="container-fluid">
@@ -26,7 +30,7 @@
                         <div class="inner">
                             <div class="d-flex justify-content-between">
                                 <h3>1</h3>
-                                <select
+                                <select @change="getAppointmentsCount()"
                                     style="height: 2rem; outline: 2px solid transparent;" class="px-1 rounded border-0">
                                     <option value="all">All</option>
                                     <option value="scheduled">Scheduled</option>
