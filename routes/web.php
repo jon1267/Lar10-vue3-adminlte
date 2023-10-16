@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AppointmentController;
 use App\Http\Controllers\Admin\AppointmentStatusController;
 use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\DashboardStatController;
 
 //Route::get('/admin/dashboard', function () {
 //    return view('dashboard');
@@ -19,6 +20,7 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/api/stats/appointments', [DashboardStatController::class, 'appointments']);
     Route::get('/api/users', [UserController::class, 'index']);
     Route::post('/api/users', [UserController::class, 'store']);
     //Route::get('/api/users/search', [UserController::class, 'search']);

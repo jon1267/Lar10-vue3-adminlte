@@ -1,5 +1,24 @@
 <script setup>
-const getAppointmentsCount = () => {};
+import {onMounted, ref} from 'vue';
+import axios from "axios";
+
+const selectAppointmentStatus = ref('all');
+const totalAppointmentsCount = ref(0);
+
+const getAppointmentsCount = () => {
+    //alert(selectAppointmentStatus.value);
+    axios.get('/api/stats/appointments', {
+        params: {
+            status: selectAppointmentStatus.value,
+        }
+    }).then((response) => {
+        totalAppointmentsCount.value = response.data.totalAppointmentsCount;
+    });
+};
+
+onMounted(() => {
+    getAppointmentsCount();
+});
 </script>
 
 <template>
@@ -29,8 +48,8 @@ const getAppointmentsCount = () => {};
                     <div class="small-box bg-info">
                         <div class="inner">
                             <div class="d-flex justify-content-between">
-                                <h3>1</h3>
-                                <select @change="getAppointmentsCount()"
+                                <h3>{{ totalAppointmentsCount}}</h3>
+                                <select v-model="selectAppointmentStatus" @change="getAppointmentsCount()"
                                     style="height: 2rem; outline: 2px solid transparent;" class="px-1 rounded border-0">
                                     <option value="all">All</option>
                                     <option value="scheduled">Scheduled</option>
