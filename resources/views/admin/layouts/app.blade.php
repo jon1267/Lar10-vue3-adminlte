@@ -7,13 +7,14 @@
     <title>AdminLTE 3 | Starter</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-<body class="hold-transition sidebar-mini">
+</head>
+<body class="hold-transition sidebar-mini ">
 <div id="app" class="wrapper">
 
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
 
         <ul class="navbar-nav">
-            <li class="nav-item">
+            <li class="nav-item" id="toggleMenuIcon">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
@@ -253,6 +254,26 @@
         <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
     </footer>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleMenuIcon = document.getElementById('toggleMenuIcon');
+        const body = document.querySelector('body');
+
+        toggleMenuIcon.addEventListener('click', () => {
+            if (body.classList.contains('sidebar-collapse')) {
+                localStorage.setItem('sidebarState', 'expanded')
+            } else {
+                localStorage.setItem('sidebarState', 'collapsed')
+            }
+        });
+
+        const sidebarState = localStorage.getItem('sidebarState');
+        if (sidebarState === 'collapsed') {
+            body.classList.add('sidebar-collapse');
+        }
+    });
+</script>
 
 </body>
 </html>
