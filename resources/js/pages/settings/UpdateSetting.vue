@@ -1,3 +1,30 @@
+<script setup>
+import { onMounted, ref } from 'vue';
+import axios from 'axios';
+import { useToastr } from '../../toastr.js';
+
+const settings = ref([]);
+const toastr = useToastr();
+
+const getSettings = () => {
+    axios.get('/api/settings')
+    .then((response) => {
+        settings.value = response.data;
+    });
+};
+
+const updateSettings = () => {
+    axios.post('/api/settings', settings.value)
+        .then((response) => {
+            toastr.success('Settings updated successfully!')
+        });
+};
+
+onMounted(() => {
+    getSettings();
+});
+</script>
+
 <template>
     <div class="content-header">
         <div class="container-fluid">
@@ -25,15 +52,15 @@
                             <h3 class="card-title">General Setting</h3>
                         </div>
 
-                        <form>
+                        <form @submit.prevent="updateSettings()">
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="appName">App Display Name</label>
-                                    <input type="text" class="form-control" id="appName" placeholder="Enter app display name">
+                                    <input v-model="settings.app_name" type="text" class="form-control" id="appName" placeholder="Enter app display name">
                                 </div>
                                 <div class="form-group">
                                     <label for="dateFormat">Date Format</label>
-                                    <select class="form-control">
+                                    <select v-model="settings.date_format" class="form-control">
                                         <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                                         <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                                         <option value="YYYY-MM-DD">YYYY-MM-DD</option>
@@ -43,7 +70,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="paginationLimit">Pagination Limit</label>
-                                    <input type="text" class="form-control" id="paginationLimit" placeholder="Enter pagination limit">
+                                    <input v-model="settings.pagination_limit" type="text" class="form-control" id="paginationLimit" placeholder="Enter pagination limit">
                                 </div>
                             </div>
 

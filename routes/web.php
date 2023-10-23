@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AppointmentController;
 use App\Http\Controllers\Admin\AppointmentStatusController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DashboardStatController;
+use App\Http\Controllers\Admin\SettingController;
 
 //Route::get('/admin/dashboard', function () {
 //    return view('dashboard');
@@ -43,7 +44,8 @@ Route::middleware('auth')->group(function () {
     //route was: '/api/appointments/{appointment}' only when change route string to this, IT FIXED ...
     Route::delete('/api/delete-appointment/{appointment}', [AppointmentController::class, 'destroy']);
 
-
+    Route::get('/api/settings', [SettingController::class, 'index']);
+    Route::post('/api/settings', [SettingController::class, 'update']);
 });
 
 Route::get('{view}', ApplicationController::class)->where('view', '(.*)')
