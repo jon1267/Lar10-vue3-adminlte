@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 //use Illuminate\Http\Request;
 use App\Http\Requests\SettingsUpdateRequest;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Cache;
 
 class SettingController extends Controller
 {
@@ -23,6 +24,7 @@ class SettingController extends Controller
             Setting::where('key', $key)->update(['value' => $value]); //! update(['value'=> $value])
         }
 
+        Cache::forget('settings'); // flush('settings') ???
         return response()->json(['success' => true]);
     }
 }

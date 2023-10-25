@@ -19,7 +19,7 @@ class UserController extends Controller
                     ->orWhere('email', 'like', "%{$searchQuery}%");
             })
             ->latest()
-            ->paginate(1);
+            ->paginate(setting('pagination_limit'));
 
         return $users; //return response()->json($users);
         /*->map(function ($user) {
