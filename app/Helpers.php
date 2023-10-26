@@ -9,5 +9,9 @@ function setting($key)
         return Setting::pluck('value','key')->all();
     }); //$settings = Setting::pluck('value','key')->all();
 
+    if (!$settings) {
+        $settings = config('settings.default');
+    }
+
     return $settings[$key] ?? false;
 }

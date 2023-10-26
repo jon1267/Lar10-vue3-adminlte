@@ -12,7 +12,13 @@ class SettingController extends Controller
 {
     public function index()
     {
-        return Setting::pluck('value','key')->toArray();
+        $settings = Setting::pluck('value','key')->toArray();
+
+        if (!$settings) {
+            return config('settings.default');
+        }
+
+        return $settings;
     }
 
     public function update(SettingsUpdateRequest $request)
@@ -21,7 +27,10 @@ class SettingController extends Controller
         $settings = $request->validated();
 
         foreach ($settings as $key => $value) {
-            Setting::where('key', $key)->update(['value' => $value]); //! update(['value'=> $value])
+            //Setting::where('key', $key)->update(['value' => $value]);//for update ok, not insert
+            Setting::updateOrCreate(
+                ['key' => $key], ['value' => $value],
+            );
         }
 
         Cache::forget('settings'); // flush('settings') ???
