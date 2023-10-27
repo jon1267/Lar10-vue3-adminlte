@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AppointmentStatusController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DashboardStatController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\ProfileController;
 
 //Route::get('/admin/dashboard', function () {
 //    return view('dashboard');
@@ -46,6 +47,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/api/settings', [SettingController::class, 'index']);
     Route::post('/api/settings', [SettingController::class, 'update']);
+
+    Route::get('/api/profile', [ProfileController::class, 'index']);
+    Route::put('/api/profile', [ProfileController::class, 'update']);
 });
 
 Route::get('{view}', ApplicationController::class)->where('view', '(.*)')
