@@ -9,6 +9,8 @@ const form = ref({
     name: '',
     email: '',
     role: '',
+    role_name: '',
+    avatar: '',
 });
 
 const getUser = () => {
@@ -29,6 +31,26 @@ const updateProfile = () => {
             errors.value = error.response.data.errors;
         }
     });
+};
+
+const fileInput = ref(null);
+const openFileInput = () => {
+    fileInput.value.click();
+};
+
+const profilePictureUrl = ref(null);
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    profilePictureUrl.value = URL.createObjectURL(file);
+    //console.log(profilePictureUrl.value, file, typeof file);
+
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+    //console.log(formData);
+    axios.post('/api/upload-profile-image', formData)
+        .then((response) => {
+            toastr.success('Image uploaded successfully.');
+        });
 };
 
 onMounted(() => {
@@ -62,13 +84,16 @@ onMounted(() => {
                     <div class="card card-primary card-outline">
                         <div class="card-body box-profile">
                             <div class="text-center">
-                                <input type="file" class="d-none">
-                                <img class="profile-user-img img-circle" src="../../noimage.png" alt="User profile picture">
+                                <input @change="handleFileChange" ref="fileInput" type="file" class="d-none">
+                                <img @click="openFileInput" class="profile-user-img img-circle"
+                                     :src="profilePictureUrl ? profilePictureUrl : form.avatar" alt="User profile pic"
+                                >
                             </div>
 
                             <h3 class="profile-username text-center">{{ form.name }}</h3>
 
-                            <p class="text-muted text-center">{{ form.role }}</p>
+                            <!--<p class="text-muted text-center">{{ form.role }}</p>-->
+                            <p class="text-muted text-center">{{ form.role_name }}</p>
                         </div>
                     </div>
                 </div>
@@ -147,4 +172,11 @@ onMounted(() => {
         </div>
     </div>
 </template>
+
+<style scoped>
+.profile-user-img:hover {
+    background-color: #0c84ff;
+    cursor: pointer;
+}
+</style>
 
