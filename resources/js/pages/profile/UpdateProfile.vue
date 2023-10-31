@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
+import {onMounted, reactive, ref} from 'vue';
 import { useToastr } from '@/toastr.js'; //import { useToastr } from '../../toastr.js';
 
 const toastr = useToastr();
@@ -31,6 +31,29 @@ const updateProfile = () => {
             errors.value = error.response.data.errors;
         }
     });
+};
+
+const changePasswordForm = reactive({
+    currentPassword: '',
+    password: '',
+    passwordConfirmation: '',
+});
+
+const handleChangePassword = () => {
+    errors.value = '';
+    axios.post('/api/change-user-password', changePasswordForm)
+        .then((response) => {
+            toastr.success(response.data.message);
+            for (const field in changePasswordForm) {
+                changePasswordForm[field] = '';
+            }
+        })
+        .catch((error) => {
+            if (error.response && error.response.status === 422) {
+                errors.value = error.response.data.errors;
+            }
+        });
+
 };
 
 const fileInput = ref(null);
@@ -134,26 +157,28 @@ onMounted(() => {
                                 </div>
 
                                 <div class="tab-pane" id="changePassword">
-                                    <form class="form-horizontal">
+                                    <form @submit.prevent="handleChangePassword" class="form-horizontal">
                                         <div class="form-group row">
                                             <label for="currentPassword" class="col-sm-3 col-form-label">Current
                                                 Password</label>
                                             <div class="col-sm-9">
-                                                <input type="password" class="form-control " id="currentPassword" placeholder="Current Password">
+                                                <input v-model="changePasswordForm.currentPassword" type="password" class="form-control " id="currentPassword" placeholder="Current Password">
+                                                <span class="text-danger text-sm" v-if="errors && errors.current_password">{{ errors.current_password[0]}}</span>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="newPassword" class="col-sm-3 col-form-label">New
                                                 Password</label>
                                             <div class="col-sm-9">
-                                                <input type="password" class="form-control " id="newPassword" placeholder="New Password">
+                                                <input v-model="changePasswordForm.password" type="password" class="form-control " id="newPassword" placeholder="New Password">
+                                                <span class="text-danger text-sm" v-if="errors && errors.password">{{ errors.password[0]}}</span>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="passwordConfirmation" class="col-sm-3 col-form-label">Confirm
                                                 New Password</label>
                                             <div class="col-sm-9">
-                                                <input type="password" class="form-control " id="passwordConfirmation" placeholder="Confirm New Password">
+                                                <input v-model="changePasswordForm.passwordConfirmation" type="password" class="form-control " id="passwordConfirmation" placeholder="Confirm New Password">
                                             </div>
                                         </div>
                                         <div class="form-group row">
