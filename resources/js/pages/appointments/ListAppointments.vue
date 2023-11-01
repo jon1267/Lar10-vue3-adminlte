@@ -32,6 +32,13 @@ const appointmentCount = computed(() => {
     return appointmentStatus.value.map(status => status.count).reduce((acc, value) => acc + value, 0);
 });
 
+//after deletion appointments not recounted statuses count (All, Scheduled, Confirmed, ...) this fix it
+const updateAppointmentsStatusCount = (id) => {
+    const deletedAppointmentStatus = appointments.value.data.find(appointment => appointment.id === id).status.name;
+    const statusToUpdate = appointmentStatus.value.find(status => status.name === deletedAppointmentStatus);
+    statusToUpdate.count--;
+};
+
 const deleteAppointment = (id) => {
 
     Swal.fire({
@@ -46,6 +53,8 @@ const deleteAppointment = (id) => {
         if (result.isConfirmed) {
             axios.delete(`/api/delete-appointment/${id}`)
                 .then((response) => {
+                    //after deletion appointments not recounted statuses count (All, Scheduled, Confirmed, ...) this fix it
+                    updateAppointmentsStatusCount(id);
 
                     //line below remove(array filter) from appointments array, appointment with  appointment.id === id
                     appointments.value.data = appointments.value.data.filter(appointment => appointment.id !== id );
@@ -134,7 +143,7 @@ onMounted(() => {
                                     <th scope="col">Date</th>
                                     <th scope="col">Time</th>
                                     <th scope="col">Status</th>
-                                    <th scope="col">Options</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -152,7 +161,7 @@ onMounted(() => {
                                         </router-link>
 
                                         <a @click.prevent="deleteAppointment(appointment.id)">
-                                            <i class="fa fa-trash text-danger"></i>
+                                            <i class="fa fa-trash text-danger" style="cursor: pointer"></i>
                                         </a>
                                     </td>
                                 </tr>
