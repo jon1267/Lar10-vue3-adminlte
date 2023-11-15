@@ -20,6 +20,13 @@ const router = createRouter({
 
 app.use(router);
 
-app.component('Login', Login);
+//app.component('Login', Login);
+if (window.location.pathname === '/login') {
+    const currentApp = createApp({});
+    currentApp.component('Login', Login);
+    currentApp.mount('#login');
+} else {
+    app.mount('#app');
+}
 
-app.mount('#app');
+
