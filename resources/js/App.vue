@@ -4,9 +4,12 @@ import AppNavbar from './components/AppNavbar.vue';
 import SidebarLeft from './components/SidebarLeft.vue';
 import SidebarRight from './components/SidebarRight.vue';
 import AppFooter from './components/AppFooter.vue';
+import { useAuthUserStore } from './stores/AuthUserStore.js';
+
+const authUserStore = useAuthUserStore();
+authUserStore.getAuthUser();
 
 const settings = ref(null);
-
 const fetchSettings = () => {
     axios.get('/api/settings')
         .then((response) => {

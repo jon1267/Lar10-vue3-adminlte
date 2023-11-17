@@ -1,4 +1,7 @@
 <script setup>
+import { useAuthUserStore } from '../stores/AuthUserStore.js';
+const authUserStore = useAuthUserStore();
+
 defineProps({
     user: Object,
     settings: Object,
@@ -20,7 +23,7 @@ defineProps({
                     <img :src="user?.avatar" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block">{{ user?.name }}</a>
+                    <a href="#" class="d-block">{{ authUserStore.user.name }}</a>
                 </div>
             </div>
 
