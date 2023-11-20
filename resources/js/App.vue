@@ -26,13 +26,14 @@ const fetchAuthUser = () => {
         });
 };
 
+/* removed to SidebarLeft
 const logout = () => {
     axios.post('/logout')
         .then((response) => {
             window.location.href = '/';
             //window.location.href = '/login';
         });
-};
+};*/
 
 onMounted(() => {
     fetchSettings();
