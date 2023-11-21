@@ -1,7 +1,13 @@
 <script setup>
-    import {reactive, ref} from 'vue';
-    import axios from "axios";
+    import { reactive, ref } from 'vue';
+    import axios from 'axios';
     import { useToastr } from "@/toastr";
+    import { useRouter } from 'vue-router';
+    import { useAuthUserStore } from '../../stores/AuthUserStore';
+
+    const authUserStore = useAuthUserStore();
+
+    const router = useRouter();
 
     const form = reactive({
         email: '',
@@ -16,7 +22,7 @@
         errorMessage.value = '';
         axios.post('/login', form)
             .then(() => {
-                window.location.href = '/admin/dashboard';
+                router.push('/admin/dashboard'); //window.location.href = '/admin/dashboard';
             })
             .catch((error) => {
                 //console.log(error)

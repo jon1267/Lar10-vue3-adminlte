@@ -7,24 +7,26 @@ import AppFooter from './components/AppFooter.vue';
 import { useAuthUserStore } from './stores/AuthUserStore.js';
 
 const authUserStore = useAuthUserStore();
-authUserStore.getAuthUser();
+//authUserStore.getAuthUser();
 
-const settings = ref(null);
-const fetchSettings = () => {
-    axios.get('/api/settings')
-        .then((response) => {
-            settings.value = response.data;
-        });
-};
+// this remove to SettingStore.js (pinia store)
+//const settings = ref(null);
+//const fetchSettings = () => {
+//    axios.get('/api/settings')
+//        .then((response) => {
+//            settings.value = response.data;
+//        });
+//};
 
-const user = ref(null);
-
-const fetchAuthUser = () => {
-    axios.get('/api/profile')
-        .then((response) => {
-            user.value = response.data;
-        });
-};
+// this remove to AuthUserStore.js (pinia store)
+//const user = ref(null);
+//
+//const fetchAuthUser = () => {
+//    axios.get('/api/profile')
+//        .then((response) => {
+//            user.value = response.data;
+//        });
+//};
 
 /* removed to SidebarLeft
 const logout = () => {
@@ -35,19 +37,21 @@ const logout = () => {
         });
 };*/
 
-onMounted(() => {
-    fetchSettings();
-    fetchAuthUser();
-});
+// !need, all remove to pinia store
+//onMounted(() => {
+//    fetchSettings();
+//    fetchAuthUser();
+//});
 </script>
 
 <template>
 
-    <div id="app" class="wrapper">
+    <div v-if="authUserStore.user.name !== ''" id="app" class="wrapper">
 
         <AppNavbar />
 
-        <SidebarLeft :user="user" :settings="settings" />
+        <!--<SidebarLeft :user="user" :settings="settings" />-->
+        <SidebarLeft />
 
         <div class="content-wrapper">
             <router-view/>
@@ -55,8 +59,12 @@ onMounted(() => {
 
         <SidebarRight />
 
-        <AppFooter :settings="settings" />
+        <!--<AppFooter :settings="settings" />-->
+        <AppFooter />
 
+    </div>
+    <div v-else class="login-page">
+        <router-view/>
     </div>
 
 </template>

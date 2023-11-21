@@ -28,8 +28,11 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // this 1 line - added code
-        Fortify::loginView(function () {return view('auth.login');});
+        // this 1 line below - we added this code
+        // Fortify::loginView(function () {return view('auth.login');});
+        // && line above make refresh page in browser (not SPA). We refactor this for fool SPA (line below)
+        Fortify::loginView(function () { return view('admin.layouts.app'); });
+
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
