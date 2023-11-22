@@ -6,8 +6,8 @@ export const useSettingStore = defineStore('SettingStore',() => {
         app_name: '',
     });
 
-    const getSetting = () => {
-        axios.get('/api/settings')
+    const getSetting = async () => {
+        await axios.get('/api/settings')
             .then((response) => {
                 setting.value = response.data;
             });
