@@ -1,19 +1,27 @@
 <script setup>
-
+import { useSettingStore } from "../stores/SettingStore.js";
+const settingsStore = useSettingStore();
 </script>
 
 <template>
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <nav class="main-header navbar navbar-expand" :class="settingsStore.theme === 'dark' ? 'navbar-dark' : 'navbar-light'">
 
         <ul class="navbar-nav">
             <li class="nav-item" id="toggleMenuIcon">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
+            <!--
             <li class="nav-item d-none d-sm-inline-block">
                 <a href="index3.html" class="nav-link">Home</a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
                 <a href="#" class="nav-link">Contact</a>
+            </li>
+            -->
+            <li class="nav-item d-none d-sm-inline-block">
+                <a @click.prevent="settingsStore.changeTheme" href="#" class="nav-link">
+                    <i class="far" :class="settingsStore.theme === 'dark' ? 'fa-moon' : 'fa-sun'"></i>
+                </a>
             </li>
         </ul>
 

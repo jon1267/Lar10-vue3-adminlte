@@ -1,13 +1,19 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import AppNavbar from './components/AppNavbar.vue';
 import SidebarLeft from './components/SidebarLeft.vue';
 import SidebarRight from './components/SidebarRight.vue';
 import AppFooter from './components/AppFooter.vue';
 import { useAuthUserStore } from './stores/AuthUserStore.js';
+import { useSettingStore } from "./stores/SettingStore.js";
 
 const authUserStore = useAuthUserStore();
+const settingStore = useSettingStore();
 //authUserStore.getAuthUser();
+
+const currentThemeMode = computed(() => {
+    return (settingStore.theme === 'dark') ? 'dark-mode' : '';
+});
 
 // this remove to SettingStore.js (pinia store)
 //const settings = ref(null);
@@ -46,7 +52,7 @@ const logout = () => {
 
 <template>
 
-    <div v-if="authUserStore.user.name !== ''" id="app" class="wrapper">
+    <div v-if="authUserStore.user.name !== ''" id="app" class="wrapper" :class="currentThemeMode">
 
         <AppNavbar />
 
@@ -63,7 +69,7 @@ const logout = () => {
         <AppFooter />
 
     </div>
-    <div v-else class="login-page">
+    <div v-else class="login-page" :class="currentThemeMode">
         <router-view/>
     </div>
 

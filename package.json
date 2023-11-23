@@ -12,6 +12,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@vueuse/core": "^10.6.1",
         "admin-lte": "3.2",
         "flatpickr": "^4.6.13",
         "jquery": "^3.7.0",
